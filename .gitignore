@@ -23,6 +23,9 @@
 # misc
 .DS_Store
 *.pem
+.claude/
+.playwright-cli/
+handdrawn-border-options.html
 
 # debug
 npm-debug.log*
