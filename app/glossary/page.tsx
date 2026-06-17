@@ -1,4 +1,6 @@
 import { getGlossary } from "@/lib/cases";
+import { PAPER_COLORS } from "@/lib/paperPalette";
+import PageContainer from "@/components/PageContainer";
 import type { CSSProperties } from "react";
 
 export const dynamic = "force-dynamic";
@@ -51,7 +53,7 @@ export default async function GlossaryPage() {
   const entries = parseConcepts(getGlossary());
 
   return (
-    <div className="mx-auto max-w-[1180px] px-8 py-10">
+    <PageContainer width="wide">
       <header className="mb-9 border-b border-border pb-7">
         <h1 className="mb-3 font-serif text-[56px] font-semibold leading-none tracking-tight">
           <span className="marker-underline">概念提醒</span>
@@ -63,15 +65,17 @@ export default async function GlossaryPage() {
 
       {entries.length > 0 ? (
         <div className="grid gap-5 md:grid-cols-2">
-          {entries.map((entry, index) => (
+          {entries.map((entry, index) => {
+            const color = PAPER_COLORS[index % PAPER_COLORS.length];
+            return (
             <article
               key={entry.title}
-              className="paper-note px-6 py-5"
+              className="paper-note draft-paper px-6 py-5"
               style={
                 {
-                  "--note-bg": CONCEPT_COLORS[index % CONCEPT_COLORS.length].bg,
-                  "--note-border": CONCEPT_COLORS[index % CONCEPT_COLORS.length].border,
-                  "--tape-bg": CONCEPT_COLORS[index % CONCEPT_COLORS.length].tape,
+                  "--note-bg": color.bg,
+                  "--note-border": color.border,
+                  "--paper-edge": color.border,
                 } as CSSProperties
               }
             >
@@ -84,14 +88,15 @@ export default async function GlossaryPage() {
                 <ConceptField label="判断用法" value={entry.usage} emphasis />
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="border border-dashed border-border px-5 py-16 text-center text-muted">
           <p>还没有概念记录。</p>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 }
 
@@ -111,11 +116,3 @@ function ConceptField({
     </div>
   );
 }
-
-const CONCEPT_COLORS = [
-  { bg: "#edf7fb", border: "#abcddd", tape: "#cfe4ee" },
-  { bg: "#eef8ea", border: "#bdd8b6", tape: "#d9e9cf" },
-  { bg: "#fbebe0", border: "#dfbca6", tape: "#efc9b2" },
-  { bg: "#f2eef9", border: "#d0c0e3", tape: "#ddd1ee" },
-  { bg: "#f8edc7", border: "#dfc77a", tape: "#f4dfa4" },
-];

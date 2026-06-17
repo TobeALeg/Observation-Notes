@@ -13,6 +13,9 @@
   --aubergine: #e9e2f2;
   --ochre: #f4dfa4;
   --cyan: #d9ece8;
+  --ink: #274d5f; /* 深墨蓝：选中 / 强调底 */
+  --accent-green: #4f7c4e; /* 绿色强调：原则 / 校准 */
+  --avatar: #f2ddbc; /* 头像底 */
 }
 
 @theme inline {
@@ -28,6 +31,9 @@
   --color-aubergine: var(--aubergine);
   --color-ochre: var(--ochre);
   --color-cyan: var(--cyan);
+  --color-ink: var(--ink);
+  --color-accent-green: var(--accent-green);
+  --color-avatar: var(--avatar);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   /* 中文宋体栈：标题用，呈现编辑/书卷气，零下载、离线即生效 */
@@ -66,6 +72,75 @@ body::before {
     linear-gradient(135deg, rgba(255, 255, 255, 0.5), transparent 48%),
     var(--note-bg, var(--card));
   box-shadow: 4px 5px 0 rgba(178, 166, 145, 0.16);
+}
+
+.paper-note.draft-paper {
+  background:
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.09'/></svg>"),
+    var(--note-bg, var(--card));
+}
+
+.no-tape::before {
+  display: none;
+}
+
+/* 真实便利贴：无边框，靠粘胶条 + 硬偏移投影 + 翘角 */
+.postit {
+  position: relative;
+  border-radius: 2px;
+  background:
+    linear-gradient(to bottom,
+      rgba(0, 0, 0, 0.06) 0,
+      rgba(0, 0, 0, 0.06) 28px,
+      transparent 28px
+    ),
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.62' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.11'/></svg>"),
+    var(--postit-bg, #fff9c4);
+  /* 硬偏移投影（手绘风格关键）+ 极轻模糊层增加真实感 */
+  box-shadow:
+    4px 5px 0 rgba(0, 0, 0, 0.13),
+    6px 8px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* 右下角翘起暗示 */
+.postit::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 26px;
+  height: 26px;
+  background: linear-gradient(225deg, rgba(0, 0, 0, 0.10) 40%, transparent 40%);
+  border-radius: 0 0 2px 0;
+  pointer-events: none;
+}
+
+.sticky-note {
+  position: relative;
+  padding: 14px 13px 16px;
+  border: 1.5px solid var(--sn-border, #c9beaa);
+  border-radius: 3px 9px 5px 7px / 7px 3px 9px 5px;
+  background:
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.10'/></svg>"),
+    var(--sn-bg, #f8edc7);
+  box-shadow: 2px 4px 0 rgba(96, 75, 35, 0.09);
+  rotate: var(--sn-rotate, -2deg);
+}
+
+.sticky-note::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 16px;
+  rotate: 1.5deg;
+  border: 1px solid rgba(128, 103, 45, 0.18);
+  border-radius: 2px 3px 2px 3px;
+  background: rgba(244, 223, 164, 0.80);
+  box-shadow: 1px 1px 0 rgba(96, 75, 35, 0.04);
 }
 
 .paper-note::before {

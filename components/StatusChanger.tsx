@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { CASE_STATUSES, type CaseStatus } from "@/lib/constants";
-import { STATUS_STYLE } from "@/components/StatusBadge";
+import { STATUS_STYLE } from "@/lib/statusStyle";
 
 export default function StatusChanger({
   id,
@@ -33,7 +33,7 @@ export default function StatusChanger({
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-1 border border-border bg-card p-1">
+    <div className="flex flex-wrap items-center gap-1 sketch-control bg-card p-1">
       {CASE_STATUSES.map((s) => {
         const active = s === current;
         const style = STATUS_STYLE[s];
@@ -44,8 +44,8 @@ export default function StatusChanger({
             disabled={pending}
             className={`px-3 py-1.5 text-sm transition-colors disabled:opacity-60 ${
               active
-                ? `${style.chip} border`
-                : "border border-transparent text-muted hover:text-foreground"
+                ? `sketch-chip ${style.chip}`
+                : "text-muted hover:text-foreground"
             }`}
           >
             <span className="inline-flex items-center gap-1.5">

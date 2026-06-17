@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import CaseEditor from "@/components/CaseEditor";
+import PageContainer from "@/components/PageContainer";
 import { getCase } from "@/lib/cases";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +16,7 @@ export default async function EditCasePage({
   if (!item) notFound();
 
   return (
-    <div className="mx-auto max-w-3xl px-5 py-10">
+    <PageContainer width="read">
       <Link
         href={`/case/${encodeURIComponent(item.id)}`}
         className="text-sm text-muted hover:text-foreground"
@@ -45,6 +46,6 @@ export default async function EditCasePage({
           founderReminder: item.founderReminder,
         }}
       />
-    </div>
+    </PageContainer>
   );
 }

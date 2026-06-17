@@ -1,7 +1,11 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import CaseCard from "@/components/CaseCard";
-import StatusBadge, { STATUS_STYLE } from "@/components/StatusBadge";
+import StatusBadge from "@/components/StatusBadge";
+import Tape from "@/components/Tape";
+import PageContainer from "@/components/PageContainer";
+import { STATUS_STYLE } from "@/lib/statusStyle";
+import { PAPER_COLORS } from "@/lib/paperPalette";
 import { CASE_STATUSES } from "@/lib/constants";
 import { getAllCases } from "@/lib/cases";
 
@@ -19,19 +23,16 @@ const CONCEPTS = [
     title: "GEO（生成式引擎优化）",
     body: "让内容和产品更容易被 AI 引擎理解、引用和推荐的策略集合。",
     tag: "分发策略",
-    bg: "bg-mineral-blue",
   },
   {
     title: "Pitch-first",
     body: "先用提案 / 落地页 / 演示等方式验证客户需求与付费意愿，再决定是否做产品。",
     tag: "GTM 策略",
-    bg: "bg-clay",
   },
   {
     title: "ICP（理想客户画像）",
     body: "针对最能创造价值和最可能付费的客户群体的清晰定义。",
     tag: "客户洞察",
-    bg: "bg-aubergine",
   },
 ];
 
@@ -45,7 +46,7 @@ export default async function CasesPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[1512px] px-6 py-8 md:px-8">
+    <PageContainer width="full">
       <header className="mb-7 grid gap-8 lg:grid-cols-[1fr_360px] lg:items-start">
         <div className="pt-2">
           <h1 className="mb-4 font-serif text-[64px] font-semibold leading-none tracking-tight text-foreground md:text-[78px]">
@@ -57,17 +58,11 @@ export default async function CasesPage() {
           </p>
         </div>
         <aside
-          className="paper-note mt-2 px-8 py-7"
-          style={
-            {
-              "--note-bg": "#dcecf4",
-              "--note-border": "#abcddd",
-              "--tape-bg": "#f4dfa4",
-            } as CSSProperties
-          }
+          className="postit mt-2 min-h-[200px] px-7 pb-7 pt-11 rotate-[-2.5deg]"
+          style={{ "--postit-bg": "#fff9c4" } as CSSProperties}
         >
-          <p className="mb-2 text-5xl leading-none text-primary/80">“</p>
-          <p className="px-5 text-center font-serif text-lg leading-8 text-foreground/85">
+          <p className="-mb-1 text-5xl leading-none text-primary/80">"</p>
+          <p className="line-clamp-4 px-4 text-center font-serif text-lg leading-8 text-foreground/85">
             判断不是为了证明自己对，
             <br />
             而是为了离现实更近一步。
@@ -98,7 +93,7 @@ export default async function CasesPage() {
 
       <div className="grid gap-8 xl:grid-cols-[300px_minmax(0,1fr)_320px]">
         <aside className="xl:border-r xl:border-border xl:pr-8">
-          <SectionTape label="时间线" />
+          <Tape label="时间线" />
           <div className="relative mt-7 space-y-7">
             <div className="absolute left-[9px] top-2 h-[calc(100%-28px)] border-l sketch-rule" />
             {timeline.map((item) => {
@@ -135,7 +130,7 @@ export default async function CasesPage() {
         </aside>
 
         <main className="space-y-5">
-          <SectionTape label="精选 Case" color="#efc9b2" />
+          <Tape label="精选 Case" color="#efc9b2" />
           {featured.length === 0 ? (
             <div className="rounded-xl border border-dashed border-border bg-card px-5 py-16 text-center text-muted">
               <p className="mb-2">还没有 Case</p>
@@ -166,17 +161,23 @@ export default async function CasesPage() {
         <aside className="space-y-7 xl:border-l xl:border-border xl:pl-8">
           <section>
             <div className="mb-5 flex items-center justify-between">
-              <SectionTape label="概念提醒" />
+              <Tape label="概念提醒" />
               <Link href="/glossary" className="text-xs text-muted hover:text-foreground">
                 全部概念 →
               </Link>
             </div>
             <div className="space-y-3">
-              {CONCEPTS.map((concept) => (
+              {CONCEPTS.map((concept, index) => (
                 <article
                   key={concept.title}
-                  className={`paper-note px-5 py-4 ${concept.bg}`}
-                  style={{ "--tape-bg": "#f4dfa4" } as CSSProperties}
+                  className="paper-note draft-paper px-5 py-4"
+                  style={
+                    {
+                      "--note-bg": PAPER_COLORS[index % PAPER_COLORS.length].bg,
+                      "--note-border": PAPER_COLORS[index % PAPER_COLORS.length].border,
+                      "--paper-edge": PAPER_COLORS[index % PAPER_COLORS.length].border,
+                    } as CSSProperties
+                  }
                 >
                   <h2 className="mb-2 font-serif text-lg font-semibold text-foreground">
                     {concept.title}
@@ -191,17 +192,17 @@ export default async function CasesPage() {
           </section>
 
           <section
-            className="paper-note px-5 py-5"
+            className="paper-note draft-paper px-5 py-5"
             style={
               {
-                "--note-bg": "#f2f6ec",
-                "--note-border": "#cbdabf",
-                "--tape-bg": "#f4dfa4",
+                "--note-bg": PAPER_COLORS[1].bg,
+                "--note-border": PAPER_COLORS[1].border,
+                "--paper-edge": PAPER_COLORS[1].border,
               } as CSSProperties
             }
           >
             <div className="mb-4 flex items-center justify-between">
-              <SectionTape label="未来创业提醒" color="#f4dfa4" />
+              <Tape label="未来创业提醒" color="#f4dfa4" />
               <Link href="/principles" className="text-xs text-muted hover:text-foreground">
                 全部提醒 →
               </Link>
@@ -209,7 +210,7 @@ export default async function CasesPage() {
             <ul className="space-y-3 text-sm leading-6 text-foreground/85">
               {CALIBRATION_PROMPTS.map((prompt) => (
                 <li key={prompt} className="flex gap-2">
-                  <span className="sketch-control mt-1 inline-flex h-4 w-4 items-center justify-center bg-white/60 text-[10px] text-[#4f7c4e]">
+                  <span className="sketch-control mt-1 inline-flex h-4 w-4 items-center justify-center bg-white/60 text-[10px] text-accent-green">
                     ✓
                   </span>
                   <span>{prompt}</span>
@@ -218,14 +219,14 @@ export default async function CasesPage() {
             </ul>
             <Link
               href="/principles"
-              className="mt-5 flex border-t pt-4 text-sm font-medium text-[#4f7c4e] sketch-rule"
+              className="mt-5 flex border-t pt-4 text-sm font-medium text-accent-green sketch-rule"
             >
               + 新增提醒
             </Link>
           </section>
         </aside>
       </div>
-    </div>
+    </PageContainer>
   );
 }
 
@@ -244,7 +245,7 @@ function FilterChip({
     <button
       className={`sketch-chip inline-flex h-10 items-center gap-2 px-4 text-sm transition-colors ${
         active
-          ? "bg-[#274d5f] text-white"
+          ? "bg-ink text-white"
           : "bg-card text-muted hover:text-foreground"
       }`}
     >
@@ -267,22 +268,5 @@ function SelectControl({ label }: { label: string }) {
       {label}
       <span className="text-xs text-muted">⌄</span>
     </button>
-  );
-}
-
-function SectionTape({
-  label,
-  color = "#f4dfa4",
-}: {
-  label: string;
-  color?: string;
-}) {
-  return (
-    <div
-      className="paper-label w-fit font-serif text-base font-semibold"
-      style={{ "--label-bg": color } as CSSProperties}
-    >
-      {label}
-    </div>
   );
 }

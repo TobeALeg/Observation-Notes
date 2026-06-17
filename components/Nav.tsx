@@ -6,15 +6,15 @@ import { usePathname } from "next/navigation";
 const TABS = [
   { href: "/", label: "判断分歧" },
   { href: "/glossary", label: "概念提醒" },
-  { href: "/review", label: "复盘回顾" },
-  { href: "/principles", label: "设置" },
+  { href: "/review", label: "复盘" },
+  { href: "/principles", label: "原则" },
 ];
 
 export default function Nav() {
   const pathname = usePathname();
   return (
     <header className="sticky top-0 z-20 border-b bg-background/90 backdrop-blur-md sketch-rule">
-      <div className="mx-auto flex h-[68px] max-w-[1512px] items-center gap-8 px-8">
+      <div className="mx-auto flex h-[68px] max-w-[1512px] items-center gap-8 px-6 md:px-8">
         <Link href="/" className="flex items-center gap-4 shrink-0">
           <span className="sketch-logo" aria-hidden />
           <span className="font-serif text-xl font-semibold tracking-tight">
@@ -54,15 +54,7 @@ export default function Nav() {
               ⌘K
             </span>
           </label>
-          <Link
-            href="/review"
-            className="sketch-chip inline-flex h-10 items-center gap-2 bg-primary px-5 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5"
-            aria-label="从复盘入口管理 Case"
-          >
-            <span className="text-xl leading-none">+</span>
-            <span>新建 Case</span>
-          </Link>
-          <span className="sketch-chip grid h-10 w-10 place-items-center bg-[#f2ddbc] font-serif text-sm text-foreground">
+          <span className="sketch-chip grid h-10 w-10 place-items-center bg-avatar font-serif text-sm text-foreground">
             D
           </span>
         </div>

@@ -3,34 +3,11 @@ import { notFound } from "next/navigation";
 import Markdown from "@/components/Markdown";
 import StatusChanger from "@/components/StatusChanger";
 import StatusBadge from "@/components/StatusBadge";
+import PageContainer from "@/components/PageContainer";
 import { getCase, getAllCases } from "@/lib/cases";
+import { CASE_SECTIONS } from "@/lib/caseSections";
 
 export const dynamic = "force-dynamic";
-
-const SECTIONS: {
-  key:
-    | "scene"
-    | "decisionQuestion"
-    | "bossJudgment"
-    | "myJudgment"
-    | "disagreement"
-    | "validationSignals"
-    | "result"
-    | "unresolvedReason"
-    | "founderReminder";
-  label: string;
-  hint: string;
-}[] = [
-  { key: "scene", label: "场景", hint: "发生了什么，约束是什么" },
-  { key: "decisionQuestion", label: "决策问题", hint: "真正要判断的问题" },
-  { key: "bossJudgment", label: "老板判断", hint: "他的选择和底层假设" },
-  { key: "myJudgment", label: "我的判断", hint: "你的判断和底层假设" },
-  { key: "disagreement", label: "分歧本质", hint: "差在目标、阶段、风险还是假设" },
-  { key: "validationSignals", label: "验证信号", hint: "未来看哪些现实反馈" },
-  { key: "result", label: "结果", hint: "发生了什么，谁更接近现实" },
-  { key: "unresolvedReason", label: "为何无解", hint: "状态为无解时必须解释" },
-  { key: "founderReminder", label: "给未来创业的提醒", hint: "这条 Case 最终要留下的东西" },
-];
 
 export default async function CasePage({
   params,
@@ -43,14 +20,14 @@ export default async function CasePage({
   const caseTitles = new Map(getAllCases().map((c) => [c.id, c.title]));
 
   return (
-    <article className="mx-auto max-w-3xl px-5 py-8">
+    <PageContainer width="read">
       <div className="flex items-center justify-between">
         <Link href="/" className="text-sm text-muted hover:text-foreground">
           返回 Cases
         </Link>
         <Link
           href={`/case/${encodeURIComponent(item.id)}/edit`}
-          className="text-sm text-primary hover:underline underline-offset-2"
+          className="sketch-chip bg-card px-4 py-1.5 text-sm text-primary transition-colors hover:border-primary"
         >
           编辑
         </Link>
@@ -85,7 +62,7 @@ export default async function CasePage({
                   <Link
                     key={concept}
                     href="/glossary"
-                    className="border border-primary/25 px-2.5 py-1 text-primary hover:bg-primary/5"
+                    className="sketch-chip bg-card px-2.5 py-1 text-primary transition-colors hover:border-primary"
                   >
                     {concept}
                   </Link>
@@ -99,7 +76,7 @@ export default async function CasePage({
                   <Link
                     key={caseId}
                     href={`/case/${encodeURIComponent(caseId)}`}
-                    className="border border-border px-2.5 py-1 hover:text-foreground"
+                    className="sketch-chip bg-card px-2.5 py-1 text-foreground/75 transition-colors hover:text-foreground"
                   >
                     {caseTitles.get(caseId) ?? caseId}
                   </Link>
@@ -111,7 +88,7 @@ export default async function CasePage({
       </header>
 
       <div className="space-y-9">
-        {SECTIONS.map((section) => {
+        {CASE_SECTIONS.map((section) => {
           const text = item[section.key];
           if (section.key === "unresolvedReason" && !text && item.status !== "无解") {
             return null;
@@ -135,6 +112,6 @@ export default async function CasePage({
           );
         })}
       </div>
-    </article>
+    </PageContainer>
   );
 }

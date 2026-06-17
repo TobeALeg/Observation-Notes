@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CASE_AREAS } from "@/lib/constants";
+import { CASE_SECTIONS } from "@/lib/caseSections";
 
 export interface CaseEditorInitial {
   id: string;
@@ -18,22 +19,6 @@ export interface CaseEditorInitial {
   unresolvedReason: string;
   founderReminder: string;
 }
-
-const SECTIONS: {
-  key: Exclude<keyof CaseEditorInitial, "id" | "title" | "area">;
-  label: string;
-  hint: string;
-}[] = [
-  { key: "scene", label: "场景", hint: "发生了什么，约束是什么" },
-  { key: "decisionQuestion", label: "决策问题", hint: "真正要判断的问题" },
-  { key: "bossJudgment", label: "老板判断", hint: "他的选择和底层假设" },
-  { key: "myJudgment", label: "我的判断", hint: "你的判断和底层假设" },
-  { key: "disagreement", label: "分歧本质", hint: "差在目标、阶段、风险还是假设" },
-  { key: "validationSignals", label: "验证信号", hint: "未来看哪些现实反馈" },
-  { key: "result", label: "结果", hint: "发生了什么，谁更接近现实" },
-  { key: "unresolvedReason", label: "为何无解", hint: "无解时必须解释；否则可留空" },
-  { key: "founderReminder", label: "给未来创业的提醒", hint: "未来自己要带走的原则" },
-];
 
 export default function CaseEditor({ initial }: { initial: CaseEditorInitial }) {
   const router = useRouter();
@@ -69,7 +54,7 @@ export default function CaseEditor({ initial }: { initial: CaseEditorInitial }) 
   }
 
   const inputClass =
-    "w-full border border-border bg-card px-3.5 py-2.5 text-[15px] transition-colors focus:border-primary focus:outline-none";
+    "w-full sketch-control bg-card px-3.5 py-2.5 text-[15px] transition-colors focus:border-primary focus:outline-none";
 
   return (
     <div className="space-y-7">
@@ -93,7 +78,7 @@ export default function CaseEditor({ initial }: { initial: CaseEditorInitial }) 
         </select>
       </div>
 
-      {SECTIONS.map((section) => (
+      {CASE_SECTIONS.map((section) => (
         <div key={section.key}>
           <label className="mb-2 flex items-baseline gap-2 font-serif text-lg font-semibold">
             {section.label}
@@ -115,14 +100,14 @@ export default function CaseEditor({ initial }: { initial: CaseEditorInitial }) 
         <button
           onClick={save}
           disabled={saving}
-          className="bg-primary px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="sketch-chip bg-primary px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           {saving ? "保存中..." : "保存 Case"}
         </button>
         <button
           onClick={() => router.push(detailHref)}
           disabled={saving}
-          className="border border-border px-5 py-2.5 text-sm text-muted transition-colors hover:text-foreground"
+          className="sketch-control bg-card px-5 py-2.5 text-sm text-muted transition-colors hover:text-foreground"
         >
           取消
         </button>

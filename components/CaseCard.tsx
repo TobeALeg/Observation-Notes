@@ -2,54 +2,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { JudgmentCase } from "@/lib/cases";
 import { mdToPlain } from "@/components/Markdown";
-
-const NOTE_STYLE: Record<
-  JudgmentCase["status"],
-  { bg: string; border: string; tape: string; label: string; labelClass: string }
-> = {
-  待验证: {
-    bg: "#f6fbff",
-    border: "#afd2e4",
-    tape: "#cfe4ee",
-    label: "待验证",
-    labelClass: "bg-[#1f6d9e] text-white",
-  },
-  我更接近: {
-    bg: "#f7fbf3",
-    border: "#bdd7b3",
-    tape: "#cfe7ca",
-    label: "我更接近",
-    labelClass: "bg-[#4c9a5a] text-white",
-  },
-  老板更接近: {
-    bg: "#f6f8fd",
-    border: "#bdc8de",
-    tape: "#d6deef",
-    label: "老板更接近",
-    labelClass: "bg-[#6077a4] text-white",
-  },
-  双方都错: {
-    bg: "#fff7f0",
-    border: "#dfbca6",
-    tape: "#efc9b2",
-    label: "双方都错",
-    labelClass: "bg-[#be684f] text-white",
-  },
-  混合结果: {
-    bg: "#fbf8ff",
-    border: "#d0c0e3",
-    tape: "#ddd1ee",
-    label: "混合结果",
-    labelClass: "bg-[#7560a3] text-white",
-  },
-  无解: {
-    bg: "#f8f9f6",
-    border: "#cfd6d0",
-    tape: "#dde2dc",
-    label: "无解",
-    labelClass: "bg-[#9aa2a1] text-white",
-  },
-};
+import { STATUS_STYLE } from "@/lib/statusStyle";
 
 export default function CaseCard({
   item,
@@ -59,7 +12,7 @@ export default function CaseCard({
   featured?: boolean;
 }) {
   const summary = mdToPlain(item.myJudgment || item.decisionQuestion || item.disagreement);
-  const note = NOTE_STYLE[item.status];
+  const note = STATUS_STYLE[item.status];
   const concepts = item.concepts.length > 0 ? item.concepts : [item.phase || item.area];
   const daysAgo = getDaysAgo(item.date);
   return (
@@ -70,10 +23,10 @@ export default function CaseCard({
       }`}
       style={
         {
-          "--note-bg": note.bg,
-          "--note-border": note.border,
+          "--note-bg": note.noteBg,
+          "--note-border": note.noteBorder,
           "--tape-bg": note.tape,
-          "--paper-edge": note.border,
+          "--paper-edge": note.noteBorder,
         } as CSSProperties
       }
     >
@@ -91,12 +44,9 @@ export default function CaseCard({
       </svg>
       <div className="mb-4 flex items-center justify-between gap-3">
         <span className={`sketch-control px-3 py-1 text-xs font-semibold ${note.labelClass}`}>
-          {note.label}
+          {item.status}
         </span>
-        <span className="flex items-center gap-5 text-sm text-muted">
-          <span>{daysAgo}</span>
-          <span className="text-xl leading-none text-foreground">⋮</span>
-        </span>
+        <span className="text-sm text-muted">{daysAgo}</span>
       </div>
       <h2 className="mb-5 font-serif text-[24px] font-semibold leading-snug tracking-tight text-foreground md:text-[26px]">
         {item.title}
@@ -130,7 +80,7 @@ export default function CaseCard({
         </p>
       )}
       <div className="mt-4 flex items-center justify-between gap-4 text-sm text-foreground">
-        <span className="min-w-0 truncate text-xs text-muted">⌘ 关联对话：{item.id}.md</span>
+        <span className="min-w-0 truncate text-xs text-muted">关联对话：{item.id}.md</span>
         <span className="shrink-0 transition-transform group-hover:translate-x-1">
           查看详情 →
         </span>
