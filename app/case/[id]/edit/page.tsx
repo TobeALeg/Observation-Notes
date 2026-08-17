@@ -17,18 +17,25 @@ export default async function EditCasePage({
 
   return (
     <PageContainer width="read">
-      <Link
-        href={`/case/${encodeURIComponent(item.id)}`}
-        className="text-sm text-muted hover:text-foreground"
-      >
-        返回 Case
-      </Link>
-
-      <div className="mt-4 mb-7 flex items-center gap-2 text-xs text-muted">
-        <time className="font-mono">{item.date}</time>
-        <span>/</span>
-        <span>定稿编辑</span>
-      </div>
+      <header className="mb-7 border-b border-border pb-5">
+        <Link
+          href={`/case/${encodeURIComponent(item.id)}`}
+          replace
+          className="text-sm text-muted hover:text-foreground"
+        >
+          ← 回到 Case
+        </Link>
+        <div className="mt-5 flex flex-wrap items-center gap-2 text-xs text-muted">
+          <time className="font-mono">{item.date}</time>
+          <span>/</span>
+          <span>{item.area}</span>
+          <span>/</span>
+          <span>编辑定稿</span>
+        </div>
+        <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight">
+          编辑 Case
+        </h1>
+      </header>
 
       <CaseEditor
         initial={{

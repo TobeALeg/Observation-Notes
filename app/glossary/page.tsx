@@ -1,56 +1,12 @@
-import { getGlossary } from "@/lib/cases";
+import { getAllConcepts } from "@/lib/cases";
 import { PAPER_COLORS } from "@/lib/paperPalette";
 import PageContainer from "@/components/PageContainer";
 import type { CSSProperties } from "react";
 
 export const dynamic = "force-dynamic";
 
-interface ConceptEntry {
-  title: string;
-  focus: string;
-  confusion: string;
-  usage: string;
-}
-
-function cleanLine(text: string): string {
-  return text
-    .replace(/^\*\*([^*]+)\*\*：?/, "")
-    .replace(/\*\*/g, "")
-    .trim();
-}
-
-function pickField(body: string, label: string): string {
-  const line = body
-    .split("\n")
-    .map((item) => item.trim())
-    .find((item) => item.startsWith(`**${label}**`));
-  return line ? cleanLine(line) : "";
-}
-
-function parseConcepts(markdown: string): ConceptEntry[] {
-  const firstConcept = markdown.search(/^##\s+/m);
-  if (firstConcept === -1) return [];
-
-  return markdown
-    .slice(firstConcept)
-    .split(/^##\s+/m)
-    .map((part) => part.trim())
-    .filter(Boolean)
-    .map((part) => {
-      const [title = "", ...bodyLines] = part.split("\n");
-      const body = bodyLines.join("\n");
-      return {
-        title: title.trim(),
-        focus: pickField(body, "看点"),
-        confusion: pickField(body, "别混淆"),
-        usage: pickField(body, "判断用法"),
-      };
-    })
-    .filter((entry) => entry.title);
-}
-
 export default async function GlossaryPage() {
-  const entries = parseConcepts(getGlossary());
+  const entries = getAllConcepts();
 
   return (
     <PageContainer width="wide">
@@ -70,12 +26,10 @@ export default async function GlossaryPage() {
             return (
             <article
               key={entry.title}
-              className="paper-note draft-paper px-6 py-5"
+              className="tab-card"
               style={
                 {
-                  "--note-bg": color.bg,
-                  "--note-border": color.border,
-                  "--paper-edge": color.border,
+                  "--tab-bg": color.bg,
                 } as CSSProperties
               }
             >
@@ -92,7 +46,7 @@ export default async function GlossaryPage() {
           })}
         </div>
       ) : (
-        <div className="border border-dashed border-border px-5 py-16 text-center text-muted">
+        <div className="sketch-control bg-card px-5 py-16 text-center text-muted">
           <p>还没有概念记录。</p>
         </div>
       )}

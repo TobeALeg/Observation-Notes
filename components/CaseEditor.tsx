@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CASE_AREAS } from "@/lib/constants";
@@ -49,16 +50,18 @@ export default function CaseEditor({ initial }: { initial: CaseEditorInitial }) 
       setSaving(false);
       return;
     }
-    router.push(detailHref);
+    router.replace(detailHref);
     router.refresh();
   }
 
   const inputClass =
     "w-full sketch-control bg-card px-3.5 py-2.5 text-[15px] transition-colors focus:border-primary focus:outline-none";
+  const textareaClass =
+    "w-full resize-y border-0 border-t border-border bg-transparent px-0 py-3 text-[15px] leading-7 outline-none focus:border-primary";
 
   return (
-    <div className="space-y-7">
-      <div className="grid gap-3 sm:grid-cols-[1fr_160px]">
+    <div className="pb-28">
+      <div className="mb-7 grid gap-3 sm:grid-cols-[1fr_160px]">
         <input
           className={`${inputClass} font-serif text-lg font-semibold`}
           value={form.title}
@@ -78,39 +81,56 @@ export default function CaseEditor({ initial }: { initial: CaseEditorInitial }) 
         </select>
       </div>
 
-      {CASE_SECTIONS.map((section) => (
-        <div key={section.key}>
-          <label className="mb-2 flex items-baseline gap-2 font-serif text-lg font-semibold">
-            {section.label}
-            <span className="font-sans text-xs font-normal text-muted">
-              {section.hint}
-            </span>
-          </label>
-          <textarea
-            className={`${inputClass} min-h-28 resize-y leading-7`}
-            value={form[section.key]}
-            onChange={(e) => set(section.key, e.target.value)}
-          />
-        </div>
-      ))}
+      <div className="tab-card space-y-1 bg-card">
+        {CASE_SECTIONS.map((section) => (
+          <section
+            key={section.key}
+            className="border-t border-border/70 py-4 first:border-t-0 first:pt-0 last:pb-0"
+          >
+            <label className="block">
+              <span className="flex flex-wrap items-baseline gap-2">
+                <span className="font-serif text-lg font-semibold">
+                  {section.label}
+                </span>
+                <span className="text-xs text-muted">{section.hint}</span>
+              </span>
+              <textarea
+                className={`${textareaClass} ${
+                  section.key === "unresolvedReason" ? "min-h-20" : "min-h-28"
+                }`}
+                value={form[section.key]}
+                onChange={(e) => set(section.key, e.target.value)}
+              />
+            </label>
+          </section>
+        ))}
+      </div>
 
       {error && <p className="text-sm text-rose-600">{error}</p>}
 
-      <div className="flex items-center gap-3 pt-1">
-        <button
-          onClick={save}
-          disabled={saving}
-          className="sketch-chip bg-primary px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
-        >
-          {saving ? "保存中..." : "保存 Case"}
-        </button>
-        <button
-          onClick={() => router.push(detailHref)}
-          disabled={saving}
-          className="sketch-control bg-card px-5 py-2.5 text-sm text-muted transition-colors hover:text-foreground"
-        >
-          取消
-        </button>
+      <div className="sticky bottom-4 mt-6 flex items-center justify-between gap-3 rounded-[10px] border border-border bg-background/90 px-4 py-3 backdrop-blur">
+        <p className="hidden text-xs text-muted sm:block">
+          保存后返回 Case 详情
+        </p>
+        <div className="ml-auto flex items-center gap-3">
+          <Link
+            href={detailHref}
+            replace
+            aria-disabled={saving}
+            className={`sketch-control bg-card px-5 py-2.5 text-sm text-muted transition-colors hover:text-foreground ${
+              saving ? "pointer-events-none opacity-60" : ""
+            }`}
+          >
+            取消
+          </Link>
+          <button
+            onClick={save}
+            disabled={saving}
+            className="sketch-chip bg-primary px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+          >
+            {saving ? "保存中..." : "保存 Case"}
+          </button>
+        </div>
       </div>
     </div>
   );

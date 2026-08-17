@@ -3,42 +3,31 @@ import type { CSSProperties } from "react";
 import CaseCard from "@/components/CaseCard";
 import StatusBadge from "@/components/StatusBadge";
 import Tape from "@/components/Tape";
+import ThesisFilter from "@/components/ThesisFilter";
 import PageContainer from "@/components/PageContainer";
 import { STATUS_STYLE } from "@/lib/statusStyle";
 import { PAPER_COLORS } from "@/lib/paperPalette";
 import { CASE_STATUSES } from "@/lib/constants";
-import { getAllCases } from "@/lib/cases";
+import { getAllCases, getAllConcepts, getAllPrinciples, getThesisGroups } from "@/lib/cases";
 
 export const dynamic = "force-dynamic";
 
-const CALIBRATION_PROMPTS = [
-  "验证大于猜测，数据大于观点。",
-  "先小步验证，再决定要不要重投入。",
-  "沟通目标是推动理解，不是证明自己。",
-  "选择可积累的路径，避免流量陷阱。",
-];
-
-const CONCEPTS = [
-  {
-    title: "GEO（生成式引擎优化）",
-    body: "让内容和产品更容易被 AI 引擎理解、引用和推荐的策略集合。",
-    tag: "分发策略",
-  },
-  {
-    title: "Pitch-first",
-    body: "先用提案 / 落地页 / 演示等方式验证客户需求与付费意愿，再决定是否做产品。",
-    tag: "GTM 策略",
-  },
-  {
-    title: "ICP（理想客户画像）",
-    body: "针对最能创造价值和最可能付费的客户群体的清晰定义。",
-    tag: "客户洞察",
-  },
-];
-
-export default async function CasesPage() {
-  const cases = getAllCases();
-  const featured = cases.slice(0, 3);
+export default async function CasesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ thesis?: string }>;
+}) {
+  const { thesis } = await searchParams;
+  const allCases = getAllCases();
+  const thesisGroups = getThesisGroups();
+  const activeThesis =
+    thesis && thesisGroups.some((g) => g.thesis === thesis) ? thesis : "";
+  const cases = activeThesis
+    ? allCases.filter((item) => item.thesis === activeThesis)
+    : allCases;
+  const principles = getAllPrinciples().slice(0, 4);
+  const concepts = getAllConcepts().slice(0, 3);
+  const featured = activeThesis ? cases : cases.slice(0, 3);
   const timeline = cases.slice(0, 4);
   const statusCounts = new Map(CASE_STATUSES.map((status) => [status, 0]));
   for (const item of cases) {
@@ -86,7 +75,7 @@ export default async function CasesPage() {
           )}
         </div>
         <div className="flex flex-wrap gap-3 lg:mr-[330px]">
-          <SelectControl label="全部主题" />
+          <ThesisFilter theses={thesisGroups.map((g) => g.thesis)} />
           <SelectControl label="最新优先" />
         </div>
       </div>
@@ -130,9 +119,12 @@ export default async function CasesPage() {
         </aside>
 
         <main className="space-y-5">
-          <Tape label="精选 Case" color="#efc9b2" />
+          <Tape
+            label={activeThesis ? `主线 · ${activeThesis}` : "精选 Case"}
+            color="#efc9b2"
+          />
           {featured.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border bg-card px-5 py-16 text-center text-muted">
+            <div className="sketch-control bg-card px-5 py-16 text-center text-muted">
               <p className="mb-2">还没有 Case</p>
               <p className="text-sm">
                 发来一段复杂对话时，AI 会先拆出候选 Case，再写入这里。
@@ -151,7 +143,7 @@ export default async function CasesPage() {
                         : ""
                   }
                 >
-                  <CaseCard item={item} featured />
+                  <CaseCard item={item} variant="featured" />
                 </div>
               ))}
             </div>
@@ -167,62 +159,69 @@ export default async function CasesPage() {
               </Link>
             </div>
             <div className="space-y-3">
-              {CONCEPTS.map((concept, index) => (
+              {concepts.map((concept, index) => (
                 <article
                   key={concept.title}
-                  className="paper-note draft-paper px-5 py-4"
+                  className="concept-slip"
                   style={
                     {
-                      "--note-bg": PAPER_COLORS[index % PAPER_COLORS.length].bg,
-                      "--note-border": PAPER_COLORS[index % PAPER_COLORS.length].border,
-                      "--paper-edge": PAPER_COLORS[index % PAPER_COLORS.length].border,
+                      "--slip-bg": PAPER_COLORS[index % PAPER_COLORS.length].bg,
+                      "--slip-border": PAPER_COLORS[index % PAPER_COLORS.length].border,
+                      "--slip-rotate": `${(index % 3) * 1.2 - 1.2}deg`,
+                      "--slip-rotate-hover": "0deg",
                     } as CSSProperties
                   }
                 >
-                  <h2 className="mb-2 font-serif text-lg font-semibold text-foreground">
+                  <h2 className="mb-1.5 font-serif text-base font-semibold text-foreground">
                     {concept.title}
                   </h2>
-                  <p className="text-sm leading-6 text-foreground/75">{concept.body}</p>
-                  <span className="mt-3 inline-flex rounded-md bg-white/55 px-2.5 py-1 text-xs text-foreground/70">
-                    {concept.tag}
+                  <p className="text-[13px] leading-6 text-foreground/75">
+                    {concept.usage || concept.focus}
+                  </p>
+                  <span className="mt-2.5 inline-flex rounded-md bg-white/45 px-2 py-0.5 text-[11px] text-foreground/65">
+                    最近更新
                   </span>
                 </article>
               ))}
             </div>
           </section>
 
-          <section
-            className="paper-note draft-paper px-5 py-5"
-            style={
-              {
-                "--note-bg": PAPER_COLORS[1].bg,
-                "--note-border": PAPER_COLORS[1].border,
-                "--paper-edge": PAPER_COLORS[1].border,
-              } as CSSProperties
-            }
-          >
-            <div className="mb-4 flex items-center justify-between">
+          <section>
+            <div className="mb-5 flex items-center justify-between">
               <Tape label="未来创业提醒" color="#f4dfa4" />
               <Link href="/principles" className="text-xs text-muted hover:text-foreground">
                 全部提醒 →
               </Link>
             </div>
-            <ul className="space-y-3 text-sm leading-6 text-foreground/85">
-              {CALIBRATION_PROMPTS.map((prompt) => (
-                <li key={prompt} className="flex gap-2">
-                  <span className="sketch-control mt-1 inline-flex h-4 w-4 items-center justify-center bg-white/60 text-[10px] text-accent-green">
-                    ✓
-                  </span>
-                  <span>{prompt}</span>
-                </li>
-              ))}
-            </ul>
-            <Link
-              href="/principles"
-              className="mt-5 flex border-t pt-4 text-sm font-medium text-accent-green sketch-rule"
-            >
-              + 新增提醒
-            </Link>
+            {principles.length === 0 ? (
+              <div className="sketch-control bg-card px-4 py-8 text-center text-sm text-muted">
+                还没有原则
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                {principles.map((principle, index) => (
+                  <div
+                    key={principle.id}
+                    className="concept-slip flex items-start gap-3"
+                    style={
+                      {
+                        "--slip-bg": PAPER_COLORS[(index + 1) % PAPER_COLORS.length].bg,
+                        "--slip-border": PAPER_COLORS[(index + 1) % PAPER_COLORS.length].border,
+                        "--slip-rotate": `${(index % 3) * 0.8 - 0.8}deg`,
+                        "--slip-rotate-hover": "0deg",
+                      } as CSSProperties
+                    }
+                  >
+                    <span className="sketch-control mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center bg-white/60 text-[10px] text-accent-green">
+                      ✓
+                    </span>
+                    <span className="text-[13px] leading-6 text-foreground/85">
+                      {principle.title}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
         </aside>
       </div>

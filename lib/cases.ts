@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
-import { CASE_AREAS, CASE_STATUSES, type CaseArea, type CaseStatus } from "./constants";
+import { CASE_AREAS, CASE_STATUSES, RECHECK_DAYS, type CaseArea, type CaseStatus } from "./constants";
 
-export { CASE_AREAS, CASE_STATUSES, type CaseArea, type CaseStatus } from "./constants";
+export { CASE_AREAS, CASE_STATUSES, RECHECK_DAYS, type CaseArea, type CaseStatus } from "./constants";
 
 export const CASES_DIR = path.join(process.cwd(), "data", "cases");
 export const PRINCIPLES_DIR = path.join(process.cwd(), "data", "principles");
@@ -16,6 +16,7 @@ export interface JudgmentCase {
   status: CaseStatus;
   title: string;
   phase: string;
+  thesis: string;
   concepts: string[];
   relatedCases: string[];
   scene: string;
@@ -48,6 +49,13 @@ export interface Principle {
   title: string;
   sourceCases: string[];
   body: string;
+}
+
+export interface ConceptEntry {
+  title: string;
+  focus: string;
+  confusion: string;
+  usage: string;
 }
 
 function parseSections(body: string): Record<string, string> {
@@ -101,6 +109,7 @@ function toCase(file: string, raw: string): JudgmentCase {
     status: normalizeStatus(data.status),
     title: String(data.title ?? file.replace(/\.md$/, "")),
     phase: String(data.phase ?? ""),
+    thesis: String(data.thesis ?? ""),
     concepts: strings(data.concepts),
     relatedCases: strings(data.related_cases),
     scene: sections["场景"] ?? "",
@@ -129,6 +138,47 @@ export function getAllCases(): JudgmentCase[] {
 
 export function getCase(id: string): JudgmentCase | undefined {
   return getAllCases().find((item) => item.id === id);
+}
+
+// 一个 Case 自录入到今天过去了多少天（按 UTC 日期，宽容解析失败）。
+export function daysSince(date: string, today: Date = new Date()): number {
+  const t = Date.parse(`${date}T00:00:00Z`);
+  if (Number.isNaN(t)) return 0;
+  const ref = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+  return Math.max(0, Math.floor((ref - t) / 86_400_000));
+}
+
+export interface RecheckItem {
+  case: JudgmentCase;
+  age: number;
+}
+
+// 到期复核队列：仍是「待验证」且录入已超过 RECHECK_DAYS 天，最久未回填的排在前面。
+export function getRecheckQueue(today: Date = new Date()): RecheckItem[] {
+  return getAllCases()
+    .filter((item) => item.status === "待验证")
+    .map((item) => ({ case: item, age: daysSince(item.date, today) }))
+    .filter((entry) => entry.age >= RECHECK_DAYS)
+    .sort((a, b) => b.age - a.age);
+}
+
+export interface ThesisGroup {
+  thesis: string;
+  cases: JudgmentCase[];
+}
+
+// 按 thesis（根分歧主线）分组，组内 Case 多的排在前面，便于发现反复出现的模式。
+export function getThesisGroups(): ThesisGroup[] {
+  const map = new Map<string, JudgmentCase[]>();
+  for (const item of getAllCases()) {
+    if (!item.thesis) continue;
+    const list = map.get(item.thesis) ?? [];
+    list.push(item);
+    map.set(item.thesis, list);
+  }
+  return [...map.entries()]
+    .map(([thesis, cases]) => ({ thesis, cases }))
+    .sort((a, b) => b.cases.length - a.cases.length);
 }
 
 export function updateCaseStatus(id: string, status: CaseStatus): boolean {
@@ -183,7 +233,49 @@ export function getAllPrinciples(): Principle[] {
     .sort((a, b) => a.title.localeCompare(b.title, "zh-CN"));
 }
 
+function cleanConceptLine(text: string): string {
+  return text
+    .replace(/^\*\*([^*]+)\*\*：?/, "")
+    .replace(/\*\*/g, "")
+    .trim();
+}
+
+function pickConceptField(body: string, label: string): string {
+  const line = body
+    .split("\n")
+    .map((item) => item.trim())
+    .find((item) => item.startsWith(`**${label}**`));
+  return line ? cleanConceptLine(line) : "";
+}
+
+function parseConceptEntries(markdown: string): ConceptEntry[] {
+  const firstConcept = markdown.search(/^##\s+/m);
+  if (firstConcept === -1) return [];
+
+  return markdown
+    .slice(firstConcept)
+    .split(/^##\s+/m)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => {
+      const [title = "", ...bodyLines] = part.split("\n");
+      const body = bodyLines.join("\n");
+      return {
+        title: title.trim(),
+        focus: pickConceptField(body, "看点"),
+        confusion: pickConceptField(body, "别混淆"),
+        usage: pickConceptField(body, "判断用法"),
+      };
+    })
+    .filter((entry) => entry.title)
+    .reverse();
+}
+
 export function getGlossary(): string {
   if (!fs.existsSync(GLOSSARY_FILE)) return "";
   return fs.readFileSync(GLOSSARY_FILE, "utf8");
+}
+
+export function getAllConcepts(): ConceptEntry[] {
+  return parseConceptEntries(getGlossary());
 }

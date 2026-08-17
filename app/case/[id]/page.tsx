@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import BackLink from "@/components/BackLink";
 import Markdown from "@/components/Markdown";
 import StatusChanger from "@/components/StatusChanger";
 import StatusBadge from "@/components/StatusBadge";
@@ -17,14 +18,16 @@ export default async function CasePage({
   const { id } = await params;
   const item = getCase(decodeURIComponent(id));
   if (!item) notFound();
-  const caseTitles = new Map(getAllCases().map((c) => [c.id, c.title]));
+  const allCases = getAllCases();
+  const caseTitles = new Map(allCases.map((c) => [c.id, c.title]));
+  const siblings = item.thesis
+    ? allCases.filter((c) => c.thesis === item.thesis && c.id !== item.id)
+    : [];
 
   return (
     <PageContainer width="read">
       <div className="flex items-center justify-between">
-        <Link href="/" className="text-sm text-muted hover:text-foreground">
-          返回 Cases
-        </Link>
+        <BackLink fallbackHref="/">← 返回上页</BackLink>
         <Link
           href={`/case/${encodeURIComponent(item.id)}/edit`}
           className="sketch-chip bg-card px-4 py-1.5 text-sm text-primary transition-colors hover:border-primary"
@@ -44,6 +47,12 @@ export default async function CasePage({
               <span>{item.phase}</span>
             </>
           )}
+          {item.thesis && (
+            <>
+              <span>/</span>
+              <span className="text-primary">主线 · {item.thesis}</span>
+            </>
+          )}
         </div>
         <h1 className="mb-5 font-serif text-[32px] font-semibold leading-tight">
           {item.title}
@@ -53,8 +62,22 @@ export default async function CasePage({
         </div>
         <StatusChanger id={item.id} status={item.status} />
 
-        {(item.concepts.length > 0 || item.relatedCases.length > 0) && (
+        {(item.concepts.length > 0 || item.relatedCases.length > 0 || siblings.length > 0) && (
           <div className="mt-5 space-y-3 text-xs text-muted">
+            {siblings.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2">
+                <span>同一主线</span>
+                {siblings.map((sib) => (
+                  <Link
+                    key={sib.id}
+                    href={`/case/${encodeURIComponent(sib.id)}`}
+                    className="sketch-chip bg-card px-2.5 py-1 text-foreground/75 transition-colors hover:text-foreground"
+                  >
+                    {sib.title}
+                  </Link>
+                ))}
+              </div>
+            )}
             {item.concepts.length > 0 && (
               <div className="flex flex-wrap items-center gap-2">
                 <span>涉及概念</span>

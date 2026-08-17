@@ -4,68 +4,68 @@ import type { CaseStatus } from "@/lib/constants";
 // 以及手绘纸条配色 noteBg / noteBorder / tape 和实心标签 labelClass（CaseCard 用）。
 // 每个状态用同一 hue 的多档颜色，保证全站同一状态颜色一致。
 export interface StatusStyle {
-  dot: string; // class，小圆点底色
-  text: string; // class，文字色
-  chip: string; // class，浅底 + 文字 + 边框（badge / 选中态）
-  labelClass: string; // class，实心标签底 + 白字（卡片角标）
-  noteBg: string; // hex，纸条卡片底（内联 --note-bg）
-  noteBorder: string; // hex，纸条边框（内联 --note-border / --paper-edge）
-  tape: string; // hex，胶带色（内联 --tape-bg）
+  dot: string;
+  text: string;
+  chip: string;
+  labelClass: string;
+  noteBg: string;
+  noteBorder: string;
+  tape: string;
 }
 
 export const STATUS_STYLE: Record<CaseStatus, StatusStyle> = {
   待验证: {
     dot: "bg-[#6fa7c0]",
     text: "text-[#2f6176]",
-    chip: "bg-[#dcecf4] text-[#2f6176] border-[#b8d4df]",
+    chip: "bg-[#eaf3f7] text-[#2f6176] border-[#c4d9e3]",
     labelClass: "bg-[#2f6176] text-white",
-    noteBg: "#f6fbff",
-    noteBorder: "#afd2e4",
-    tape: "#cfe4ee",
+    noteBg: "#f5f9fb",
+    noteBorder: "#c4d9e3",
+    tape: "#d6e8ef",
   },
   我更接近: {
     dot: "bg-[#6ca36f]",
     text: "text-[#3f7143]",
-    chip: "bg-[#e4efdf] text-[#3f7143] border-[#bdd8b6]",
+    chip: "bg-[#eff5ec] text-[#3f7143] border-[#c8d8c0]",
     labelClass: "bg-[#3f7143] text-white",
-    noteBg: "#f7fbf3",
-    noteBorder: "#bdd7b3",
-    tape: "#cfe7ca",
+    noteBg: "#f7faf4",
+    noteBorder: "#c8d8c0",
+    tape: "#d6e5cd",
   },
   老板更接近: {
     dot: "bg-[#6f83aa]",
     text: "text-[#445c87]",
-    chip: "bg-[#e1e7f2] text-[#445c87] border-[#bdc8de]",
+    chip: "bg-[#eaeef5] text-[#445c87] border-[#c5cee0]",
     labelClass: "bg-[#445c87] text-white",
-    noteBg: "#f6f8fd",
-    noteBorder: "#bdc8de",
-    tape: "#d6deef",
+    noteBg: "#f6f8fc",
+    noteBorder: "#c5cee0",
+    tape: "#dbe0ef",
   },
   双方都错: {
     dot: "bg-[#be684f]",
     text: "text-[#884631]",
-    chip: "bg-[#f3dfcf] text-[#884631] border-[#dfbca6]",
+    chip: "bg-[#f6efe7] text-[#884631] border-[#e0cfbe]",
     labelClass: "bg-[#884631] text-white",
-    noteBg: "#fff7f0",
-    noteBorder: "#dfbca6",
-    tape: "#efc9b2",
+    noteBg: "#fef9f4",
+    noteBorder: "#e0cfbe",
+    tape: "#f0dbca",
   },
   混合结果: {
     dot: "bg-[#8b75aa]",
     text: "text-[#644d85]",
-    chip: "bg-[#e9e2f2] text-[#644d85] border-[#d0c0e3]",
+    chip: "bg-[#f3f0f7] text-[#644d85] border-[#d6cde0]",
     labelClass: "bg-[#644d85] text-white",
-    noteBg: "#fbf8ff",
-    noteBorder: "#d0c0e3",
-    tape: "#ddd1ee",
+    noteBg: "#faf8fd",
+    noteBorder: "#d6cde0",
+    tape: "#e3dbef",
   },
   无解: {
-    dot: "bg-[#a3a8a8]",
-    text: "text-[#5f6765]",
-    chip: "bg-[#edf0ed] text-[#5f6765] border-[#cfd6d0]",
-    labelClass: "bg-[#5f6765] text-white",
-    noteBg: "#f8f9f6",
-    noteBorder: "#cfd6d0",
-    tape: "#dde2dc",
+    dot: "bg-[#9ba09c]",
+    text: "text-[#5d6461]",
+    chip: "bg-[#f0f2ef] text-[#5d6461] border-[#d3d8d4]",
+    labelClass: "bg-[#5d6461] text-white",
+    noteBg: "#f8f9f7",
+    noteBorder: "#d3d8d4",
+    tape: "#e2e5e1",
   },
 };

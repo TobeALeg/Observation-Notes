@@ -3,12 +3,13 @@ date: 2026-06-15
 area: 战略方向
 status: 待验证
 phase: 探索期（选 wedge，验证 GTM）
+thesis: 公司当前是 pre-startup 还是 startup
 concepts:
   - Pre-startup
   - GTM
 related_cases:
   - 2026-06-15-pitch先行能推进gtm
-title: 公司现在更像 pre-startup，而不是 startup
+title: pre-startup，还是 startup
 ---
 
 ## 场景

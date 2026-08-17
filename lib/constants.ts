@@ -19,3 +19,6 @@ export const CASE_STATUSES = [
 
 export type CaseArea = (typeof CASE_AREAS)[number];
 export type CaseStatus = (typeof CASE_STATUSES)[number];
+
+// 待验证 Case 超过这么多天未回填，自动进入「到期复核」队列。
+export const RECHECK_DAYS = 14;

@@ -34,12 +34,10 @@ export default async function PrinciplesPage() {
           {principles.map((item, index) => (
             <article
               key={item.id}
-              className="paper-note draft-paper px-6 py-5"
+              className="tab-card"
               style={
                 {
-                  "--note-bg": PAPER_COLORS[index % PAPER_COLORS.length].bg,
-                  "--note-border": PAPER_COLORS[index % PAPER_COLORS.length].border,
-                  "--paper-edge": PAPER_COLORS[index % PAPER_COLORS.length].border,
+                  "--tab-bg": PAPER_COLORS[index % PAPER_COLORS.length].bg,
                 } as CSSProperties
               }
             >
