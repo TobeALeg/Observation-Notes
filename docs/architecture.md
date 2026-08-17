@@ -2,7 +2,7 @@
 
 ## Module architecture
 
-技术栈：Next.js 16（App Router）+ TypeScript + Tailwind v4 + gray-matter。无数据库、无后端服务、App 内无 LLM。
+技术栈：Next.js 16（App Router）+ TypeScript + Tailwind v4 + gray-matter。使用静态导出和 GitHub Pages，无数据库、无运行时后端、App 内无 LLM。
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -17,32 +17,36 @@
                               │
                               ▼
                          lib/cases.ts
-                fs 读写 Case / 读 Principles / 读 Glossary
+             构建时用 fs 读取 Case / Principles / Glossary
                               │
-              ┌───────────────┴────────────────┐
-              ▼                                ▼
-      app/ 页面（Server Components）       app/api/cases/...
-      · /              Cases 首页          PUT 定稿 Case
-      · /case/[id]     Case 详情           PATCH 改 Case 状态
-      · /case/[id]/edit 定稿编辑
+                              ▼
+      app/ 页面（构建时运行的 Server Components）
+      · /              Cases 首页
+      · /case/[id]     Case 详情（generateStaticParams）
       · /review        按现实反馈复盘
       · /principles    未来创业原则
       · /glossary      business 概念辅助词典
+                              │
+                              ▼
+                    next build → out/
+                              │
+                              ▼
+             GitHub Actions → GitHub Pages
 ```
 
 ### Module relationship
 - `lib/constants.ts`：Case 领域和六个状态。无 Node 依赖，客户端组件可引用。
-- `lib/cases.ts`：仅服务端使用，负责读取 `data/cases/`、`data/principles/` 和 `docs/business-concepts.md`，以及写回 Case 正文和状态。
+- `lib/cases.ts`：仅构建时使用，负责读取 `data/cases/`、`data/principles/` 和 `docs/business-concepts.md`。
 - `components/CaseCard.tsx`：Case 列表卡片，突出决策问题和分歧。
-- `components/StatusChanger.tsx`：客户端组件，调用 `PATCH /api/cases/[id]/status` 乐观更新状态。
-- `components/CaseEditor.tsx`：客户端定稿表单，调用 `PUT /api/cases/[id]`。
 - `components/Markdown.tsx`：统一渲染 markdown；旧 `[[概念]]` 写法只跳到 `/glossary`，不再创建概念详情页。
+- `next.config.ts`：启用 `output: "export"`，在 GitHub Actions 中根据仓库名设置 Pages 子路径。
+- `.github/workflows/deploy-pages.yml`：构建 `out/` 并部署到 GitHub Pages。
 
 ### Data flow
 - **写**：AI 根据记录协议直接创建或更新 `data/cases/*.md`；概念补到 `docs/business-concepts.md`；原则补到 `data/principles/*.md`。
-- **读**：页面请求时通过 `fs` 读取 markdown，页面使用 `export const dynamic = "force-dynamic"` 保证看到最新文件。
-- **定稿**：Case 编辑页 → `PUT /api/cases/[id]` → `updateCase()` 写回正文。
-- **改状态**：详情页状态按钮 → `PATCH /api/cases/[id]/status` → `updateCaseStatus()` 改 frontmatter → `router.refresh()`。
+- **构建**：`next build` 读取全部 markdown，为首页、复盘、原则、概念和每个 Case 生成静态 HTML。
+- **发布**：`main` 更新触发 GitHub Actions，把 `out/` 作为 Pages artifact 发布。
+- **回填**：状态与正文不在浏览器中写入；用户把现实反馈交给 AI，AI 修改 markdown 并提交新快照。
 
 ### Status flow
 
@@ -121,3 +125,4 @@ source_cases:
 - **Glossary 放在 docs**：概念有价值，但不是产品主线。
 - **保留旧数据目录**：`data/observations/`、`data/threads/`、`data/concepts/` 作为历史原始材料保留，当前 App 不读取。
 - **无解是正式状态**：避免把复杂商业判断强行裁判成谁对谁错。
+- **GitHub Pages 只读**：静态托管无法安全、真实地写回仓库；与其保留假编辑器，不如让对话 + Git 成为唯一写入链路。

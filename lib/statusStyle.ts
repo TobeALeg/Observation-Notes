@@ -1,6 +1,6 @@
 import type { CaseStatus } from "@/lib/constants";
 
-// 6 种状态的唯一调色板：圆点 / 文字 / chip 标签（StatusBadge、StatusChanger 用），
+// 6 种状态的唯一调色板：圆点 / 文字 / chip 标签（StatusBadge 用），
 // 以及手绘纸条配色 noteBg / noteBorder / tape 和实心标签 labelClass（CaseCard 用）。
 // 每个状态用同一 hue 的多档颜色，保证全站同一状态颜色一致。
 export interface StatusStyle {

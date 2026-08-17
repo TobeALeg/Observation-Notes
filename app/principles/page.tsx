@@ -5,9 +5,7 @@ import PageContainer from "@/components/PageContainer";
 import { PAPER_COLORS } from "@/lib/paperPalette";
 import { getAllCases, getAllPrinciples } from "@/lib/cases";
 
-export const dynamic = "force-dynamic";
-
-export default async function PrinciplesPage() {
+export default function PrinciplesPage() {
   const principles = getAllPrinciples();
   const caseTitles = new Map(getAllCases().map((item) => [item.id, item.title]));
 

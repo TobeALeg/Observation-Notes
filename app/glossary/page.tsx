@@ -3,9 +3,7 @@ import { PAPER_COLORS } from "@/lib/paperPalette";
 import PageContainer from "@/components/PageContainer";
 import type { CSSProperties } from "react";
 
-export const dynamic = "force-dynamic";
-
-export default async function GlossaryPage() {
+export default function GlossaryPage() {
   const entries = getAllConcepts();
 
   return (

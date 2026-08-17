@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 创业判断日志
 
-## Getting Started
+把真实工作现场里的判断分歧沉淀成可被现实验证的 Case，长期校准自己的 founder judgment。
 
-First, run the development server:
+在线阅读：<https://tobealeg.github.io/Observation-Notes/>
+
+## 数据与发布边界
+
+- `data/cases/*.md` 是 Case 正本。
+- `data/principles/*.md` 只保存从多个 Case 提炼出的原则。
+- `docs/business-concepts.md` 是辅助判断的概念词典。
+- AI/Codex 按 `docs/recording-protocol.md` 创建和回填内容。
+- GitHub Pages 是只读发布快照，不在浏览器里修改仓库数据。
+
+## 本地运行
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+访问 <http://localhost:3000>。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 构建静态站点
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run preview
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+静态文件输出到 `out/`。推送到 `main` 后，GitHub Actions 会自动构建并发布 GitHub Pages。

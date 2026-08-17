@@ -13,7 +13,7 @@ AI 先拆分候选 Case / Signal / Concept / Reflection
    ↓
 AI 写入 data/cases/*.md；概念只补 docs/business-concepts.md
    ↓
-网页 App（Next.js）= 浏览 + 定稿 + 状态校准
+GitHub Pages（Next.js 静态导出）= 浏览 + 复盘发布快照
    Cases / Review / Principles / Glossary
 ```
 
@@ -35,11 +35,13 @@ AI 写入 data/cases/*.md；概念只补 docs/business-concepts.md
 - 概念：`docs/business-concepts.md`，只是辅助词典，不做知识库、不做双链。
 - 历史原始材料：`data/observations/`、`data/threads/`、`data/concepts/` 暂时保留，但当前 App 不读取。
 - 常量（7 领域 / 6 状态）的唯一来源：`lib/constants.ts`（无 Node 依赖，客户端也能引）。
-- 读写 markdown 的逻辑都在 `lib/cases.ts`（含 `fs`，仅服务端用）。
-- 改状态的接口：`PATCH /api/cases/[id]/status`。
-- 网页编辑只负责定稿 Case，不提供新建入口。
+- 读取 markdown 的逻辑都在 `lib/cases.ts`（含 `fs`，只在构建时运行）。
+- GitHub Pages 是只读快照；Case 新建、定稿和状态回填都直接修改 markdown，再通过 Git 发布。
+- `app/case/[id]/page.tsx` 用 `generateStaticParams()` 在构建时生成所有详情页。
+- `.github/workflows/deploy-pages.yml` 在 `main` 更新后构建并发布 `out/`。
 - 改 `app/globals.css` 的 `@theme` 新增颜色后，必须 `rm -rf .next && npm run dev`，否则新工具类（如 `bg-primary`）不生成。
-- 运行：`npm run dev` → http://localhost:3000
+- 本地运行：`npm run dev` → http://localhost:3000
+- 静态构建：`npm run build` → `out/`
 
 <!-- BEGIN:nextjs-agent-rules -->
 # This is NOT the Next.js you know

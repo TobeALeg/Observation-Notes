@@ -2,13 +2,16 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import BackLink from "@/components/BackLink";
 import Markdown from "@/components/Markdown";
-import StatusChanger from "@/components/StatusChanger";
 import StatusBadge from "@/components/StatusBadge";
 import PageContainer from "@/components/PageContainer";
 import { getCase, getAllCases } from "@/lib/cases";
 import { CASE_SECTIONS } from "@/lib/caseSections";
 
-export const dynamic = "force-dynamic";
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return getAllCases().map((item) => ({ id: item.id }));
+}
 
 export default async function CasePage({
   params,
@@ -28,12 +31,9 @@ export default async function CasePage({
     <PageContainer width="read">
       <div className="flex items-center justify-between">
         <BackLink fallbackHref="/">← 返回上页</BackLink>
-        <Link
-          href={`/case/${encodeURIComponent(item.id)}/edit`}
-          className="sketch-chip bg-card px-4 py-1.5 text-sm text-primary transition-colors hover:border-primary"
-        >
-          编辑
-        </Link>
+        <span className="sketch-chip bg-card px-4 py-1.5 text-xs text-muted">
+          只读发布快照
+        </span>
       </div>
 
       <header className="mt-6 mb-9 border-b border-border pb-7">
@@ -60,8 +60,6 @@ export default async function CasePage({
         <div className="mb-5 text-sm">
           <StatusBadge status={item.status} />
         </div>
-        <StatusChanger id={item.id} status={item.status} />
-
         {(item.concepts.length > 0 || item.relatedCases.length > 0 || siblings.length > 0) && (
           <div className="mt-5 space-y-3 text-xs text-muted">
             {siblings.length > 0 && (

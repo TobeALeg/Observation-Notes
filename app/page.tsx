@@ -3,31 +3,17 @@ import type { CSSProperties } from "react";
 import CaseCard from "@/components/CaseCard";
 import StatusBadge from "@/components/StatusBadge";
 import Tape from "@/components/Tape";
-import ThesisFilter from "@/components/ThesisFilter";
 import PageContainer from "@/components/PageContainer";
 import { STATUS_STYLE } from "@/lib/statusStyle";
 import { PAPER_COLORS } from "@/lib/paperPalette";
 import { CASE_STATUSES } from "@/lib/constants";
-import { getAllCases, getAllConcepts, getAllPrinciples, getThesisGroups } from "@/lib/cases";
+import { getAllCases, getAllConcepts, getAllPrinciples } from "@/lib/cases";
 
-export const dynamic = "force-dynamic";
-
-export default async function CasesPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ thesis?: string }>;
-}) {
-  const { thesis } = await searchParams;
-  const allCases = getAllCases();
-  const thesisGroups = getThesisGroups();
-  const activeThesis =
-    thesis && thesisGroups.some((g) => g.thesis === thesis) ? thesis : "";
-  const cases = activeThesis
-    ? allCases.filter((item) => item.thesis === activeThesis)
-    : allCases;
+export default function CasesPage() {
+  const cases = getAllCases();
   const principles = getAllPrinciples().slice(0, 4);
   const concepts = getAllConcepts().slice(0, 3);
-  const featured = activeThesis ? cases : cases.slice(0, 3);
+  const featured = cases.slice(0, 3);
   const timeline = cases.slice(0, 4);
   const statusCounts = new Map(CASE_STATUSES.map((status) => [status, 0]));
   for (const item of cases) {
@@ -74,10 +60,12 @@ export default async function CasesPage({
             )
           )}
         </div>
-        <div className="flex flex-wrap gap-3 lg:mr-[330px]">
-          <ThesisFilter theses={thesisGroups.map((g) => g.thesis)} />
-          <SelectControl label="最新优先" />
-        </div>
+        <Link
+          href="/review#judgment-theses"
+          className="sketch-control inline-flex h-10 items-center bg-card px-4 text-sm text-foreground transition-colors hover:border-primary"
+        >
+          按判断主线复盘 →
+        </Link>
       </div>
 
       <div className="grid gap-8 xl:grid-cols-[300px_minmax(0,1fr)_320px]">
@@ -119,10 +107,7 @@ export default async function CasesPage({
         </aside>
 
         <main className="space-y-5">
-          <Tape
-            label={activeThesis ? `主线 · ${activeThesis}` : "精选 Case"}
-            color="#efc9b2"
-          />
+          <Tape label="最新 Case" color="#efc9b2" />
           {featured.length === 0 ? (
             <div className="sketch-control bg-card px-5 py-16 text-center text-muted">
               <p className="mb-2">还没有 Case</p>
@@ -241,7 +226,7 @@ function FilterChip({
   dot?: string;
 }) {
   return (
-    <button
+    <span
       className={`sketch-chip inline-flex h-10 items-center gap-2 px-4 text-sm transition-colors ${
         active
           ? "bg-ink text-white"
@@ -257,15 +242,6 @@ function FilterChip({
       >
         {count}
       </span>
-    </button>
-  );
-}
-
-function SelectControl({ label }: { label: string }) {
-  return (
-    <button className="sketch-control inline-flex h-10 items-center gap-2 bg-card px-4 text-sm text-foreground transition-colors hover:border-primary">
-      {label}
-      <span className="text-xs text-muted">⌄</span>
-    </button>
+    </span>
   );
 }

@@ -1,6 +1,4 @@
-// Case 的 9 个内容字段的唯一定义（key / 标题 / 提示）。
-// 详情页 app/case/[id]/page.tsx 与编辑器 components/CaseEditor.tsx 都引用这里，
-// 避免两处各写一份导致文案漂移。
+// Case 详情页的 9 个内容字段及固定展示顺序。
 export const CASE_SECTIONS = [
   { key: "scene", label: "场景", hint: "发生了什么，约束是什么" },
   { key: "decisionQuestion", label: "决策问题", hint: "真正要判断的问题" },

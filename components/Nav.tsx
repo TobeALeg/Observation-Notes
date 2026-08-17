@@ -14,14 +14,14 @@ export default function Nav() {
   const pathname = usePathname();
   return (
     <header className="sticky top-0 z-20 border-b bg-background/90 backdrop-blur-md sketch-rule">
-      <div className="mx-auto flex h-[68px] max-w-[1512px] items-center gap-8 px-6 md:px-8">
+      <div className="mx-auto flex h-[68px] max-w-[1512px] items-center gap-5 px-4 md:gap-8 md:px-8">
         <Link href="/" className="flex items-center gap-4 shrink-0">
           <span className="sketch-logo" aria-hidden />
-          <span className="font-serif text-xl font-semibold tracking-tight">
+          <span className="hidden font-serif text-xl font-semibold tracking-tight sm:inline">
             创业判断日志
           </span>
         </Link>
-        <nav className="hidden h-full items-center gap-10 text-[15px] font-medium md:flex">
+        <nav className="flex h-full min-w-0 flex-1 items-center gap-5 overflow-x-auto text-sm font-medium md:gap-10 md:text-[15px]">
           {TABS.map((tab) => {
             const active =
               tab.href === "/"
@@ -42,21 +42,18 @@ export default function Nav() {
             );
           })}
         </nav>
-        <div className="ml-auto hidden items-center gap-5 lg:flex">
-          <label className="sketch-control flex h-10 w-[300px] items-center gap-3 bg-card/80 px-4 text-sm text-muted">
-            <span className="text-base leading-none">⌕</span>
-            <input
-              className="min-w-0 flex-1 bg-transparent outline-none placeholder:text-muted"
-              placeholder="搜索 Case / 概念 / 关键词"
-              type="search"
-            />
-            <span className="sketch-control bg-foreground/[0.06] px-1.5 py-0.5 text-xs text-muted">
-              ⌘K
-            </span>
-          </label>
-          <span className="sketch-chip grid h-10 w-10 place-items-center bg-avatar font-serif text-sm text-foreground">
-            D
+        <div className="ml-auto hidden shrink-0 items-center gap-3 lg:flex">
+          <span className="sketch-chip bg-card px-3 py-1.5 text-xs text-muted">
+            GitHub Pages · 只读
           </span>
+          <a
+            href="https://github.com/TobeALeg/Observation-Notes"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="sketch-control bg-card px-4 py-2 text-sm text-foreground transition-colors hover:border-primary"
+          >
+            源码 ↗
+          </a>
         </div>
       </div>
     </header>

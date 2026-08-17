@@ -30,20 +30,6 @@ export interface JudgmentCase {
   founderReminder: string;
 }
 
-export interface CaseEdit {
-  title: string;
-  area: string;
-  scene: string;
-  decisionQuestion: string;
-  bossJudgment: string;
-  myJudgment: string;
-  disagreement: string;
-  validationSignals: string;
-  result: string;
-  unresolvedReason: string;
-  founderReminder: string;
-}
-
 export interface Principle {
   id: string;
   title: string;
@@ -179,39 +165,6 @@ export function getThesisGroups(): ThesisGroup[] {
   return [...map.entries()]
     .map(([thesis, cases]) => ({ thesis, cases }))
     .sort((a, b) => b.cases.length - a.cases.length);
-}
-
-export function updateCaseStatus(id: string, status: CaseStatus): boolean {
-  const file = path.join(CASES_DIR, `${id}.md`);
-  if (!fs.existsSync(file)) return false;
-  const parsed = matter(fs.readFileSync(file, "utf8"));
-  parsed.data.status = status;
-  if (parsed.data.date) parsed.data.date = ymd(parsed.data.date);
-  fs.writeFileSync(file, matter.stringify(parsed.content, parsed.data), "utf8");
-  return true;
-}
-
-export function updateCase(id: string, edit: CaseEdit): boolean {
-  const file = path.join(CASES_DIR, `${id}.md`);
-  if (!fs.existsSync(file)) return false;
-  const parsed = matter(fs.readFileSync(file, "utf8"));
-  parsed.data.title = edit.title;
-  parsed.data.area = normalizeArea(edit.area);
-  if (parsed.data.date) parsed.data.date = ymd(parsed.data.date);
-  const body =
-    [
-      `## 场景\n${edit.scene.trim()}`,
-      `## 决策问题\n${edit.decisionQuestion.trim()}`,
-      `## 老板判断\n${edit.bossJudgment.trim()}`,
-      `## 我的判断\n${edit.myJudgment.trim()}`,
-      `## 分歧本质\n${edit.disagreement.trim()}`,
-      `## 验证信号\n${edit.validationSignals.trim()}`,
-      `## 结果\n${edit.result.trim()}`,
-      `## 为何无解\n${edit.unresolvedReason.trim()}`,
-      `## 给未来创业的提醒\n${edit.founderReminder.trim()}`,
-    ].join("\n\n") + "\n";
-  fs.writeFileSync(file, matter.stringify(body, parsed.data), "utf8");
-  return true;
 }
 
 function toPrinciple(file: string, raw: string): Principle {

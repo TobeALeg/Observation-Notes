@@ -7,9 +7,7 @@ import { STATUS_STYLE } from "@/lib/statusStyle";
 import { CASE_STATUSES, RECHECK_DAYS } from "@/lib/constants";
 import { getAllCases, getRecheckQueue, getThesisGroups } from "@/lib/cases";
 
-export const dynamic = "force-dynamic";
-
-export default async function ReviewPage() {
+export default function ReviewPage() {
   const cases = getAllCases();
   const recheck = getRecheckQueue();
   const theses = getThesisGroups();
@@ -89,7 +87,7 @@ export default async function ReviewPage() {
       </div>
 
       {theses.length > 0 && (
-        <section className="mt-12 border-t border-border pt-9">
+        <section id="judgment-theses" className="mt-12 scroll-mt-24 border-t border-border pt-9">
           <div className="mb-4 flex items-center gap-3">
             <Tape label="判断主线" color="#cdb4db" />
             <span className="text-xs text-muted">
